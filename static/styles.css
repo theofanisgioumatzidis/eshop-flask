@@ -1,0 +1,29 @@
+.tile {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    z-index: 1000;
+}
+
+@media (min-width: 1025px) {
+    .h-custom {
+    height: 100vh !important;
+    }
+}
+.img_cart_dropdown {
+    height: 50px;
+    width: auto;
+}
+
+.img_tile {
+    height: 100px;
+    width: auto;
+}
+
+.img_product {
+    height:400px;
+    width: auto;
+}
+
