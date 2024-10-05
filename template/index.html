@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block title %}Home - My E-Shop{% endblock %}
+
+{% block content %}
+    <div class="jumbotron text-center">
+        <h2>Welcome to My E-Shop!</h2>
+        <p>Here are some products:</p>
+    </div>
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-6">
+                <div class="card mb-6 shadow-sm">
+                    <div class="card-body">
+
+                        <div class="row">
+                            <!-- Product Image on the Left -->
+                            <div class="col-md-6">
+                                <img src="{{ product['img_route'] }}" alt="{{ product.title }}" class="img-fluid rounded img_tile">
+                            </div>
+
+                            <!-- Product Info on the Right -->
+                            <div class="col-md-6">
+                                <h5>{{ product.title }}</h2>
+                                <p class="h6 text-success">Price: ${{ product.price }}</p>
+                                <a href="{{ url_for('product', product_id=product['id']) }}" class="btn btn-primary">View Product</a>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
