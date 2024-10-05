@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+    <style>
+        .image-container {
+            max-width: 100px;
+        }
+
+        .product-info {
+            flex-grow: 1;
+            padding: 0 15px;
+        }
+
+        .product-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Cart Contents</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for product in cart %}
+                            <li class="list-group-item d-flex align-items-center">
+                                <div class="image-container">
+                                    <img src="{{ product.img_route }}" class="img-fluid rounded" alt="{{ product.title }}">
+                                </div>
+                                <div class="product-info">
+                                    <h5>{{ product.title }}</h5>
+                                    <div class="d-flex align-items-center">
+                                        <button class="btn btn-sm btn-secondary" onclick="updateQuantity('{{ product.id }}', 'decrease')">-</button>
+                                        <span class="mx-2">{{ product.quantity }}</span>
+                                        <button class="btn btn-sm btn-secondary" onclick="updateQuantity('{{ product.id }}', 'increase')">+</button>
+                                    </div>
+                                </div>
+                                <div class="product-actions">
+                                    <span class="badge badge-secondary">{{ product.price | euro }}</span>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteProduct('{{ product.id }}')">&times;</button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Summary</h2>
+                </div>
+                <div class="card-body">
+                    <p>Shipping: {{ shipping_cost }}</p>
+                    <p>Total: {{ total_cost }}</p>
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateQuantity(productId, action) {
+            // Implement the function to update the quantity of the product
+            // Send a request to the server to update the cart
+        }
+
+        function deleteProduct(productId) {
+            // Implement the function to delete the product from the cart
+            // Send a request to the server to delete the product
+        }
+    </script>
+{% endblock %}
