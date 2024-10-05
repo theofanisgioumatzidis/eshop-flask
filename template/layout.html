@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}My E-Shop{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+                var items = {{ session['cart'] | tojson }};
+
+                items.forEach((item, i) => {
+                // Append each item to the list with its multiple attributes
+                $('#itemList').append(
+                    `<div class="row">
+                            <div class="col-md-1">
+                                <h10 style="color: black;">${ item.quantity }</h10>
+                            </div>
+                            <!-- Product Image on the Left -->
+                            <div class="col-md-2">
+                                <img src="${ item['img_route'] }" alt="${ item.title }" class="img-fluid rounded img_cart_dropdown">
+                            </div>
+
+                            <!-- Product Info on the Right -->
+                            <div class="col-md-5">
+                                <h10 style="color: black;">${ item.title }</h10>
+                            </div>
+                            <div class="col-md-2">
+                                <p class="h10 text-success">$${ item.price }</p>
+                            </div>
+                    </div>`
+
+
+                );
+            });
+
+                // Show the tile on hover
+                $('#actionButton').hover(function() {
+                    $('#tile').show();
+                }, function() {
+                    $('#tile').hide();
+                });
+
+                // Redirect on click
+                $('#actionButton').click(function() {
+                    window.location.href = '/cart'; // Replace with your target URL
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <header class="bg-dark text-white py-3">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <button class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1">Menu</button>
+                    </div>
+                    <div class="col text-center">
+                        <a class="h1 nav-link text-white" href="{{ url_for('index') }}">My E-Shop</a>
+                    </div>
+                    <div class="col-auto d-flex align-items-center">
+                        {% if session['username'] %}
+                            <span class="nav-link text-white">Welcome, {{ session['username'] }}</span>
+                            <a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
+                        {% else %}
+                            <a class="nav-link text-white" href="{{ url_for('login') }}">Login</a>
+                            <a class="nav-link text-white" href="{{ url_for('register') }}">Register</a>
+                        {% endif %}
+                    </div>
+                    <div class="col-auto">
+                        <button id="actionButton" class="btn btn-outline-primary">Cart</button>
+                        <div id="tile" class="tile" style="width: 300px;">
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <h10 style="color: blue;">#</h10>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h10 style="color: blue;">Image</h10>
+                                    </div>
+
+                                    <!-- Product Info on the Right -->
+                                    <div class="col-md-5">
+                                        <h10 style="color: blue;">Title</h10>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h10 style="color: blue;">Price</h10>
+                                    </div>
+                                </div>
+                            <ul id="itemList" class="list-group"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="collapse multi-collapse" id="multiCollapseExample1">
+                            <div class="card card-body">
+                                <a href="{{ url_for('smartphones') }}">Smartphones</a>
+                                <a href="{{ url_for('laptops') }}">Laptops</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        {% for mesg in get_flashed_messages() %}
+            <div class="alert alert-dark" role="alert">{{ mesg }}</div>
+        {% endfor %}
+        <main class="container my-4">
+            {% block content %}{% endblock %}
+        </main>
+        <footer class="bg-dark text-white text-center py-3">
+            <p>&copy; 2024 My E-Shop</p>
+        </footer>
+    </body>
+
+</html>
