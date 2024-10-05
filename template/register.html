@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block title %} Registration {% endblock %}
+
+{% block content %}
+    <form action="/register" method="post" class="text-center">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username" placeholder="Username" type="text">
+        </div>
+        <p id="place_for_name_in_use"></p>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="confirmation" placeholder="Confirm" type="password">
+        </div>
+        <p id="place_for_wrong_confirmation"></p>
+        <div class="mb-3">
+            <button class="btn btn-primary mx-auto w-auto" type="submit">Register</button>
+        </div>
+    </form>
+
+    <script>
+        // Check if name exists
+        $('input[name="username"]').keyup(function(){
+            var text = $(this).val();
+
+            $.ajax({
+                url: "/name_check",
+                type: "get",
+                data: {jsdata: text},
+                success: function(response) {
+                    $("#place_for_name_in_use").html(response);
+                }
+            });
+        });
+
+        // Check that the two passwords are the same
+        $('input[name="confirmation"]').keyup(function() {
+            if ($(this).val() != $('input[name="password"]').val()) {
+                $("#place_for_wrong_confirmation").html("Those passwords didn’t match. Try again.");
+            } else {
+                $("#place_for_wrong_confirmation").html("");
+            }
+        });
+    </script>
+{% endblock %}
