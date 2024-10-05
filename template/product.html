@@ -1,0 +1,86 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ product.title }} - My E-Shop{% endblock %}
+
+{% block content %}
+    <div class="container my-4">
+        <!-- Product Tile -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <!-- Product Image on the Left -->
+                    <div class="col-md-6">
+                        <img src="{{ product['img_route'] }}" alt="{{ product.title }}" class="img-fluid rounded img_product">
+                    </div>
+
+                    <!-- Product Info on the Right -->
+                    <div class="col-md-6">
+                        <h2>{{ product.title }}</h2>
+                        <p class="h4 text-success">Price: ${{ product.price }}</p>
+                        <button name="add" value="{{ product['id'] }}" class="btn btn-primary" type="submit">Add to cart</button>
+                        <p id="place_for_flash_alert"></p>
+                    </div>
+
+
+
+                </div>
+
+                <!-- Product Description Section -->
+                <div class="my-4">
+                    <h4>Description</h4>
+                    <p>{{ product.descript }}</p>
+                </div>
+
+                <!-- Product Specifications Section -->
+                <div class="my-4">
+                    <h4>Specifications</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Brand</th>
+                                <td>{{ product.brand }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">RAM</th>
+                                <td>{{ product.ram }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Memory</th>
+                                <td>{{ product.memory }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Operating System</th>
+                                <td>{{ product.os_system }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Release Date</th>
+                                <td>{{ product.release }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Color</th>
+                                <td>{{ product.color }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Check if name exists
+        $('button[name="add"]').click(function(){
+
+            var text = $(this).val();
+            console.log(text);
+            $.ajax({
+                url: "/cart",
+                type: "post",
+                data: {jsdata: text},
+                success: function(response) {
+                    $("#place_for_flash_alert").html(response);
+                    console.log(response);}
+
+            });
+        });
+    </script>
+{% endblock %}
