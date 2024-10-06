@@ -20,9 +20,6 @@
                         <button name="add" value="{{ product['id'] }}" class="btn btn-primary" type="submit">Add to cart</button>
                         <p id="place_for_flash_alert"></p>
                     </div>
-
-
-
                 </div>
 
                 <!-- Product Description Section -->
@@ -77,8 +74,11 @@
                 type: "post",
                 data: {jsdata: text},
                 success: function(response) {
+                    if (response === "not_logged_in") {
+                    window.location.href = "/login";
+                } else {
                     $("#place_for_flash_alert").html(response);
-                    console.log(response);}
+                }}
 
             });
         });
