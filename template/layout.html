@@ -13,9 +13,10 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="{{ url_for('static', filename='script.js') }}"></script>
         <script>
-            $(document).ready(function() {
-                var items = {{ session['cart'] | tojson }};
+             $(document).ready(function() {
 
+                var items = {{ session.get('cart', []) | tojson }};
+                if (items.length > 0) {
                 items.forEach((item, i) => {
                 // Append each item to the list with its multiple attributes
                 $('#itemList').append(
@@ -25,7 +26,7 @@
                             </div>
                             <!-- Product Image on the Left -->
                             <div class="col-md-2">
-                                <img src="${ item['img_route'] }" alt="${ item.title }" class="img-fluid rounded img_cart_dropdown">
+                                <img src="${ item.img_route }" alt="${ item.title }" class="img-fluid rounded img_cart_dropdown">
                             </div>
 
                             <!-- Product Info on the Right -->
@@ -33,13 +34,14 @@
                                 <h10 style="color: black;">${ item.title }</h10>
                             </div>
                             <div class="col-md-2">
-                                <p class="h10 text-success">$${ item.price }</p>
+                                <span class="badge badge-secondary"> $${ item.price }</span>
                             </div>
                     </div>`
 
 
                 );
             });
+        }
 
                 // Show the tile on hover
                 $('#actionButton').hover(function() {
@@ -50,7 +52,7 @@
 
                 // Redirect on click
                 $('#actionButton').click(function() {
-                    window.location.href = '/cart'; // Replace with your target URL
+                    window.location.href = '/cart';
                 });
             });
         </script>
@@ -69,6 +71,7 @@
                     <div class="col-auto d-flex align-items-center">
                         {% if session['username'] %}
                             <span class="nav-link text-white">Welcome, {{ session['username'] }}</span>
+                            <a class="nav-link text-white" href="{{ url_for('logout') }}">Orders</a>
                             <a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
                         {% else %}
                             <a class="nav-link text-white" href="{{ url_for('login') }}">Login</a>
