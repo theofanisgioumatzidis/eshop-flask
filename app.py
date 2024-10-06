@@ -3,8 +3,8 @@ import os
 from flask import Flask, g, jsonify, flash, redirect, render_template, request, session, url_for
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-
-from helpers import apology, login_required, lookup, euro, register_db_name, SQL
+from time import gmtime, strftime
+from helpers import apology, login_required, euro, register_db_name, SQL
 
 # Configure application
 app = Flask(__name__)
@@ -31,30 +31,57 @@ def after_request(response):
 
 @app.route('/')
 def index():
-    print(session['cart'][0])
     query = """SELECT * FROM products"""
-    products = SQL(query, ())
+    products = SQL(query, )
     return render_template('index.html', products=products)
 
 @app.route('/product/<int:product_id>')
 def product(product_id):
-    try:
-        username = session["username"]
-    except:
-        username = ""
     query = """SELECT * FROM products WHERE id = ?"""
     product = SQL(query, (product_id,))[0]
-    return render_template('product.html', product=product, username=username)
+    return render_template('product.html', product=product)
 
-@app.route('/cart', methods=["GET", "POST"])
+@app.route('/update_cart', methods=["POST"])
+def update_cart():
+    if 'user_id' not in session:
+            return "not_logged_in"
+    product_id = int(request.form.get('productId'))
+    action = request.form.get('action')
+    if (action == 'delete'):
+        query = """ DELETE FROM cart
+                    WHERE user_id = ? AND product_id = ?"""
+        SQL(query, (session["user_id"], product_id,))
+        for i in range(len(session['cart'])):
+            if session['cart'][i-1]['id'] == product_id:
+                del session['cart'][i]
+                break
+        return "Cart updated successfully!"
+
+
+    if (action == 'increase'):
+        change = 1
+    elif (action == 'decrease'):
+        change = -1
+    query = """SELECT quantity FROM cart
+                WHERE user_id = ? AND product_id = ?"""
+    quantity = (SQL(query, (session["user_id"], product_id,)))[0][0]
+    query = """UPDATE cart SET quantity = ?
+                WHERE user_id = ? AND product_id = ?"""
+    quantity += change
+    SQL(query, (quantity, session["user_id"], product_id,))
+    for i in range(len(session['cart'])):
+        if session['cart'][i]['id'] == product_id :
+            session['cart'][i]['quantity'] = quantity
+
+    return "Cart updated successfully!"
+
+@app.route('/cart', methods=["GET","POST"])
 def cart():
-    if session.get("user_id") is None:
-        return jsonify({'message': 'Failed to add product to cart. Login first.','color': 'red'})
-
     # Add a product to the cart
     if request.method == "POST":
+        if 'user_id' not in session:
+            return "not_logged_in"
         product_id = int(request.form.get('jsdata'))
-        print(product_id)
         query = """SELECT title, price, img_route FROM products WHERE id = ?"""
         product_info = (SQL(query, (product_id,)))[0]
         quantity = 1
@@ -81,15 +108,13 @@ def cart():
                         'quantity': quantity,
                         'img_route': product_info[1]
                     })
-        # flash('Product added successfully.')
-        # Return a response
         return "Product added to cart successfully!"
-
-    try:
-        username = session["username"]
-    except:
-        username = ""
-    return render_template('cart.html', cart=session['cart'], username=username)
+    if 'user_id' not in session:
+            return redirect('/login')
+    total_cost = 0
+    for i in range(len(session['cart'])):
+        total_cost += session['cart'][i]['quantity'] * session['cart'][i]['price']
+    return render_template('cart.html', total_cost=total_cost)
 
 
 @app.route('/smartphones')
@@ -100,9 +125,26 @@ def smartphones():
 def laptops():
     return render_template('product.html', product=product_info)
 
-@app.route('/buy')
-def buy():
-    return render_template('product.html', product=product_info)
+@app.route('/checkout')
+def checkout():
+    if 'user_id' not in session:
+            return redirect('/login')
+    the_date = strftime("%a, %d %b %Y %H:%M:%S",
+                gmtime(1627987508.6496193))
+
+    query = """INSERT INTO orders (user_id, the_date) VALUES(?, ?)"""
+    SQL(query, (session['user_id'], the_date,))
+    query = """SELECT id FROM orders WHERE the_date = ?"""
+    order_id = (SQL(query, (the_date,)))[0][0]
+    for product in session['cart']:
+        query = """INSERT INTO orderss_products (order_id, product_id, quantity) VALUES(?, ?, ?)"""
+        SQL(query, (order_id, product['id'], product['quantity'],))
+
+    query = """DELETE FROM CART WHERE user_id = ?"""
+    SQL(query, (session['user_id'],))
+    session['cart'].clear()
+
+    return redirect('/')
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
