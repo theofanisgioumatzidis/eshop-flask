@@ -4,10 +4,6 @@
 
 {% block content %}
     <style>
-        .image-container {
-            max-width: 100px;
-        }
-
         .product-info {
             flex-grow: 1;
             padding: 0 15px;
@@ -28,10 +24,10 @@
                 </div>
                 <div class="card-body">
                     <ul class="list-group">
-                        {% for product in cart %}
+                        {% for product in session['cart'] %}
                             <li class="list-group-item d-flex align-items-center">
-                                <div class="image-container">
-                                    <img src="{{ product.img_route }}" class="img-fluid rounded" alt="{{ product.title }}">
+                                <div>
+                                    <img src="{{ product.img_route }}" class="img-fluid rounded img_tile" alt="{{ product.img_route }}">
                                 </div>
                                 <div class="product-info">
                                     <h5>{{ product.title }}</h5>
@@ -42,8 +38,8 @@
                                     </div>
                                 </div>
                                 <div class="product-actions">
-                                    <span class="badge badge-secondary">{{ product.price | euro }}</span>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteProduct('{{ product.id }}')">&times;</button>
+                                    <span class="badge badge-secondary"> ${{ product.price }}</span>
+                                    <button class="btn btn-sm btn-danger" onclick="updateQuantity('{{ product.id }}', 'delete')">&times;</button>
                                 </div>
                             </li>
                         {% endfor %}
@@ -57,9 +53,23 @@
                     <h2>Summary</h2>
                 </div>
                 <div class="card-body">
-                    <p>Shipping: {{ shipping_cost }}</p>
-                    <p>Total: {{ total_cost }}</p>
-                    <a href="{{ url_for('login') }}" class="btn btn-primary">Checkout</a>
+                    <div class="row">
+                        <div>
+                            <p>Shipping:&nbsp; </p>
+                        </div>
+                        <div>
+                            <span class="badge badge-secondary"> $9.99</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <p>Total:&nbsp; </p>
+                        </div>
+                        <div>
+                            <span class="badge badge-secondary"> ${{ total_cost }}</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('checkout') }}" class="btn btn-primary">Checkout</a>
                 </div>
             </div>
         </div>
@@ -67,13 +77,18 @@
 
     <script>
         function updateQuantity(productId, action) {
-            // Implement the function to update the quantity of the product
-            // Send a request to the server to update the cart
-        }
-
-        function deleteProduct(productId) {
-            // Implement the function to delete the product from the cart
-            // Send a request to the server to delete the product
+            $.ajax({
+                url: "/update_cart",
+                type: "post",
+                data: {productId: productId, action: action},
+                success: function(response) {
+                    if (response === "not_logged_in") {
+                    window.location.href = "/login";
+                } else {
+                    $("#place_for_flash_alert").html(response);
+                    location.reload();
+                }}
+            });
         }
     </script>
 {% endblock %}
