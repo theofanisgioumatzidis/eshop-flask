@@ -9,9 +9,10 @@
 
 @media (min-width: 1025px) {
     .h-custom {
-    height: 100vh !important;
+        height: 100vh !important;
     }
 }
+
 .img_cart_dropdown {
     height: 50px;
     width: auto;
@@ -23,7 +24,17 @@
 }
 
 .img_product {
-    height:400px;
+    height: 400px;
     width: auto;
 }
 
+.product-info {
+    flex-grow: 1;
+    padding: 0 15px;
+}
+
+.product-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
