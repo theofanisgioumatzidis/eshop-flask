@@ -21,21 +21,6 @@
     </form>
 
     <script>
-        // Check if name exists
-        $('input[name="username"]').keyup(function(){
-            var text = $(this).val();
-
-            $.ajax({
-                url: "/name_check",
-                type: "get",
-                data: {jsdata: text},
-                success: function(response) {
-                    $("#place_for_name_in_use").html(response);
-                }
-            });
-        });
-
-        // Check that the two passwords are the same
         $('input[name="confirmation"]').keyup(function() {
             if ($(this).val() != $('input[name="password"]').val()) {
                 $("#place_for_wrong_confirmation").html("Those passwords didn’t match. Try again.");
