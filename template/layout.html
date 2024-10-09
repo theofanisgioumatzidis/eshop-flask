@@ -13,37 +13,31 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="{{ url_for('static', filename='script.js') }}"></script>
         <script>
-             $(document).ready(function() {
-
+            $(document).ready(function() {
                 var items = {{ session.get('cart', []) | tojson }};
                 if (items.length > 0) {
-                items.forEach((item, i) => {
-                // Append each item to the list with its multiple attributes
-                $('#itemList').append(
-                    `<div class="row">
-                            <div class="col-md-1">
-                                <h10 style="color: black;">${ item.quantity }</h10>
-                            </div>
-                            <!-- Product Image on the Left -->
-                            <div class="col-md-2">
-                                <img src="${ item.img_route }" alt="${ item.title }" class="img-fluid rounded img_cart_dropdown">
-                            </div>
-
-                            <!-- Product Info on the Right -->
-                            <div class="col-md-5">
-                                <h10 style="color: black;">${ item.title }</h10>
-                            </div>
-                            <div class="col-md-2">
-                                <span class="badge badge-secondary"> $${ item.price }</span>
-                            </div>
-                    </div>`
+                    items.forEach((item, i) => {
+                        $('#itemList').append(
+                            `<div class="row">
+                                <div class="col-md-1">
+                                    <h10 style="color: black;">${ item.quantity }</h10>
+                                </div>
+                                <div class="col-md-2">
+                                    <img src="${ item.img_route }" alt="${ item.title }" class="img-fluid rounded img_cart_dropdown">
+                                </div>
+                                <div class="col-md-5">
+                                    <h10 style="color: black;">${ item.title }</h10>
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="badge badge-secondary"> $${ item.price }</span>
+                                </div>
+                            </div>`
 
 
-                );
-            });
-        }
+                        );
+                    });
+                }
 
-                // Show the tile on hover
                 $('#actionButton').hover(function() {
                     $('#tile').show();
                 }, function() {
@@ -63,7 +57,7 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-auto">
-                        <button class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1">Menu</button>
+                        <button class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#menu_collapse" aria-expanded="false" aria-controls="menu_collapse">Menu</button>
                     </div>
                     <div class="col text-center">
                         <a class="h1 nav-link text-white" href="{{ url_for('index') }}">My E-Shop</a>
@@ -71,7 +65,7 @@
                     <div class="col-auto d-flex align-items-center">
                         {% if session['username'] %}
                             <span class="nav-link text-white">Welcome, {{ session['username'] }}</span>
-                            <a class="nav-link text-white" href="{{ url_for('logout') }}">Orders</a>
+                            <a class="nav-link text-white" href="{{ url_for('orders') }}">Orders</a>
                             <a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
                         {% else %}
                             <a class="nav-link text-white" href="{{ url_for('login') }}">Login</a>
@@ -81,32 +75,32 @@
                     <div class="col-auto">
                         <button id="actionButton" class="btn btn-outline-primary">Cart</button>
                         <div id="tile" class="tile" style="width: 300px;">
-                                <div class="row">
-                                    <div class="col-md-1">
-                                        <h10 style="color: blue;">#</h10>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <h10 style="color: blue;">Image</h10>
-                                    </div>
-
-                                    <!-- Product Info on the Right -->
-                                    <div class="col-md-5">
-                                        <h10 style="color: blue;">Title</h10>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <h10 style="color: blue;">Price</h10>
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <h10 style="color: blue;">#</h10>
                                 </div>
+                                <div class="col-md-2">
+                                    <h10 style="color: blue;">Image</h10>
+                                </div>
+
+
+                                <div class="col-md-5">
+                                    <h10 style="color: blue;">Title</h10>
+                                </div>
+                                <div class="col-md-2">
+                                    <h10 style="color: blue;">Price</h10>
+                                </div>
+                            </div>
                             <ul id="itemList" class="list-group"></ul>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <div class="collapse multi-collapse" id="multiCollapseExample1">
+                        <div class="collapse multi-collapse" id="menu_collapse">
                             <div class="card card-body">
-                                <a href="{{ url_for('smartphones') }}">Smartphones</a>
-                                <a href="{{ url_for('laptops') }}">Laptops</a>
+                                <a href="{{ url_for('category', category='Smartphones') }}">Smartphones</a>
+                                <a href="{{ url_for('category', category='Laptops') }}">Laptops</a>
                             </div>
                         </div>
                     </div>
