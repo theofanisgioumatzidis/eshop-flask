@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+
+{% block title %}Orders{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <h2>Orders</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for order in orders %}
+                    <li class="list-group-item">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <h5>{{ order.id }}</h5>
+                            </div>
+                            <div class="col-md-2">
+                                <h5>{{ order.the_date }}</h5>
+                            </div>
+                            <div class="col-md-2">
+                                <h5>$ {{ order.shipping_cost }}</h5>
+                            </div>
+                            <div class="col-md-2">
+                                <h5>$ {{ order.total_cost }}</h5>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#contents_collapse_{{ order.id }}" aria-expanded="false" aria-controls="contents_collapse_{{ order.id }}">Contents</button>
+                            </div>
+                        </div>
+                        <div class="collapse" id="contents_collapse_{{ order.id }}">
+                            <div class="card card-body mt-2">
+                                {% for product in products[order.id] %}
+                                    <div class="row align-items-center mb-2">
+                                        <div class="col-md-2">
+                                            <img src="{{ product.img_route }}" alt="{{ product.title }}" class="img-fluid rounded img_cart_dropdown">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p>{{ product.title }}</p>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <p>{{ product.quantity }}</p>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <p>${{ product.price }}</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function updateQuantity(productId, action) {
+            $.ajax({
+                url: "/update_cart",
+                type: "post",
+                data: {
+                    productId: productId,
+                    action: action
+                },
+                success: function(response) {
+                    if (response === "not_logged_in") {
+                        window.location.href = "/login";
+                    } else {
+                        $("#place_for_flash_alert").html(response);
+                        location.reload();
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}
