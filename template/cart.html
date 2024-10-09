@@ -3,19 +3,6 @@
 {% block title %}Cart{% endblock %}
 
 {% block content %}
-    <style>
-        .product-info {
-            flex-grow: 1;
-            padding: 0 15px;
-        }
-
-        .product-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-    </style>
-
     <div class="row">
         <div class="col-md-8">
             <div class="card">
@@ -26,8 +13,8 @@
                     <ul class="list-group">
                         {% for product in session['cart'] %}
                             <li class="list-group-item d-flex align-items-center">
-                                <div>
-                                    <img src="{{ product.img_route }}" class="img-fluid rounded img_tile" alt="{{ product.img_route }}">
+                                <div class="col-md-4">
+                                    <img src="{{ product.img_route }}" class="img-fluid rounded img_tile center" alt="{{ product.img_route }}">
                                 </div>
                                 <div class="product-info">
                                     <h5>{{ product.title }}</h5>
@@ -58,7 +45,7 @@
                             <p>Shipping:&nbsp; </p>
                         </div>
                         <div>
-                            <span class="badge badge-secondary"> $9.99</span>
+                            <span class="badge badge-secondary"> ${{ shipping_cost }}</span>
                         </div>
                     </div>
                     <div class="row">
@@ -69,7 +56,11 @@
                             <span class="badge badge-secondary"> ${{ total_cost }}</span>
                         </div>
                     </div>
-                    <a href="{{ url_for('checkout') }}" class="btn btn-primary">Checkout</a>
+                    <form action="/checkout" method="get">
+                        <input type="hidden" name="shipping_cost" value="{{ shipping_cost }}">
+                        <input type="hidden" name="total_cost" value="{{ total_cost }}">
+                        <button class="btn btn-primary" type="submit">Checkout</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -80,14 +71,18 @@
             $.ajax({
                 url: "/update_cart",
                 type: "post",
-                data: {productId: productId, action: action},
+                data: {
+                    productId: productId,
+                    action: action
+                },
                 success: function(response) {
                     if (response === "not_logged_in") {
-                    window.location.href = "/login";
-                } else {
-                    $("#place_for_flash_alert").html(response);
-                    location.reload();
-                }}
+                        window.location.href = "/login";
+                    } else {
+                        $("#place_for_flash_alert").html(response);
+                        location.reload();
+                    }
+                }
             });
         }
     </script>
