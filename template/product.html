@@ -4,16 +4,12 @@
 
 {% block content %}
     <div class="container my-4">
-        <!-- Product Tile -->
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="row">
-                    <!-- Product Image on the Left -->
                     <div class="col-md-6">
                         <img src="{{ product['img_route'] }}" alt="{{ product.title }}" class="img-fluid rounded img_product">
                     </div>
-
-                    <!-- Product Info on the Right -->
                     <div class="col-md-6">
                         <h2>{{ product.title }}</h2>
                         <p class="h4 text-success">Price: ${{ product.price }}</p>
@@ -21,14 +17,10 @@
                         <p id="place_for_flash_alert"></p>
                     </div>
                 </div>
-
-                <!-- Product Description Section -->
                 <div class="my-4">
                     <h4>Description</h4>
                     <p>{{ product.descript }}</p>
                 </div>
-
-                <!-- Product Specifications Section -->
                 <div class="my-4">
                     <h4>Specifications</h4>
                     <table class="table table-bordered">
@@ -64,23 +56,53 @@
         </div>
     </div>
     <script>
-        // Check if name exists
-        $('button[name="add"]').click(function(){
-
+        $('button[name="add"]').click(function() {
             var text = $(this).val();
-            console.log(text);
             $.ajax({
                 url: "/cart",
                 type: "post",
-                data: {jsdata: text},
+                data: {
+                    jsdata: text
+                },
+                datatype: "json",
                 success: function(response) {
                     if (response === "not_logged_in") {
-                    window.location.href = "/login";
-                } else {
-                    $("#place_for_flash_alert").html(response);
-                }}
-
+                        window.location.href = "/login";
+                    } else {
+                        $("#place_for_flash_alert").html(response.message);
+                        updateCartDisplay(response.cart);
+                    }
+                }
             });
         });
+
+        function updateCartDisplay(cart) {
+            $('#itemList').empty();
+            let totalItems = 0;
+
+            if (cart.length > 0) {
+                cart.forEach(item => {
+                    totalItems += item.quantity;
+                    $('#itemList').append(
+                        `<div class="row">
+                        <div class="col-md-1">
+                            <h10 style="color: black;">${item.quantity}</h10>
+                        </div>
+                        <div class="col-md-2">
+                            <img src="${item.img_route}" alt="${item.title}" class="img-fluid rounded img_cart_dropdown">
+                        </div>
+                        <div class="col-md-5">
+                            <h10 style="color: black;">${item.title}</h10>
+                        </div>
+                        <div class="col-md-2">
+                            <span class="badge badge-secondary"> $${item.price}</span>
+                        </div>
+                    </div>`
+                    );
+                });
+            } else {
+                $('#itemList').append('<li class="list-group-item">Your cart is empty.</li>');
+            }
+        }
     </script>
 {% endblock %}
