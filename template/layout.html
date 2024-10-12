@@ -4,6 +4,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Welcome to My E-Shop. Your one-stop solution for Smartphones, Laptops, and more.">
+        <meta name="keywords" content="E-shop, Smartphones, Laptops, Electronics, Online Shopping">
         <title>{% block title %}My E-Shop{% endblock %}</title>
         <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -17,36 +19,41 @@
                 var items = {{ session.get('cart', []) | tojson }};
                 if (items.length > 0) {
                     items.forEach((item, i) => {
-                        $('#itemList').append(
-                            `<div class="row">
-                                <div class="col-md-1">
-                                    <h10 style="color: black;">${ item.quantity }</h10>
+                        let truncatedTitle = item.title.length > 20 ? item.title.substring(0, 20) + "..." : item.title;
+                        $('#itemList .list-group').append(
+                            `<li class="list-group-item">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4">
+                                        <h6 style="color: black;">${truncatedTitle}</h6>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span style="color: black;">Quantity: ${item.quantity}</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <img src="${item.img_route}" alt="${item.title}" class="img-fluid rounded img_cart_dropdown" style="max-width: 100px;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <span class="badge badge-secondary">$${item.price}</span>
+                                    </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <img src="${ item.img_route }" alt="${ item.title }" class="img-fluid rounded img_cart_dropdown">
-                                </div>
-                                <div class="col-md-5">
-                                    <h10 style="color: black;">${ item.title }</h10>
-                                </div>
-                                <div class="col-md-2">
-                                    <span class="badge badge-secondary"> $${ item.price }</span>
-                                </div>
-                            </div>`
-
-
+                            </li>`
                         );
                     });
                 }
 
                 $('#actionButton').hover(function() {
-                    $('#tile').show();
+                    // Check if menu is already shown, hide it
+                    if ($('#menu_collapse').hasClass('show')) {
+                        $('#menu_collapse').collapse('hide');
+                    }
+                    // Show the cart item list
+                    $('#itemList').collapse('show');
                 }, function() {
-                    $('#tile').hide();
+                    // Hide the cart list when mouse leaves
+                    $('#itemList').collapse('hide');
                 });
-
-                // Redirect on click
-                $('#actionButton').click(function() {
-                    window.location.href = '/cart';
+                $('#actionButton').on('click', function() {
+                    window.location.href = "{{ url_for('cart') }}";
                 });
             });
         </script>
@@ -55,15 +62,13 @@
     <body>
         <header class="bg-dark text-white py-3">
             <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <button class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#menu_collapse" aria-expanded="false" aria-controls="menu_collapse">Menu</button>
-                    </div>
-                    <div class="col text-center">
-                        <a class="h1 nav-link text-white" href="{{ url_for('index') }}">My E-Shop</a>
-                    </div>
-                    <div class="col-auto d-flex align-items-center">
-                        {% if session['username'] %}
+                <div class="col text-center">
+                    <a class="h1 nav-link text-white" href="{{ url_for('index') }}">My E-Shop</a>
+                </div>
+                <div class="col-auto ml-auto d-flex align-items-center">
+                    <div class="ml-auto d-flex">
+
+                        {% if session.get('username') %}
                             <span class="nav-link text-white">Welcome, {{ session['username'] }}</span>
                             <a class="nav-link text-white" href="{{ url_for('orders') }}">Orders</a>
                             <a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
@@ -72,27 +77,14 @@
                             <a class="nav-link text-white" href="{{ url_for('register') }}">Register</a>
                         {% endif %}
                     </div>
+                </div>
+                <div class="row align-items-center">
                     <div class="col-auto">
+                        <button class="btn btn-outline-primary" type="button" id="menuButton" data-toggle="collapse" data-target="#menu_collapse" aria-expanded="false" aria-controls="menu_collapse">Menu</button>
+                    </div>
+                    <div class="col-auto ml-auto d-flex align-items-center">
                         <button id="actionButton" class="btn btn-outline-primary">Cart</button>
-                        <div id="tile" class="tile" style="width: 300px;">
-                            <div class="row">
-                                <div class="col-md-1">
-                                    <h10 style="color: blue;">#</h10>
-                                </div>
-                                <div class="col-md-2">
-                                    <h10 style="color: blue;">Image</h10>
-                                </div>
 
-
-                                <div class="col-md-5">
-                                    <h10 style="color: blue;">Title</h10>
-                                </div>
-                                <div class="col-md-2">
-                                    <h10 style="color: blue;">Price</h10>
-                                </div>
-                            </div>
-                            <ul id="itemList" class="list-group"></ul>
-                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -107,6 +99,15 @@
                 </div>
             </div>
         </header>
+        <div class="container">
+            <div class="row">
+                <div class="collapse multi-collapse ml-auto" id="itemList">
+                    <div class="card card-body">
+                        <ul class="list-group"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% for mesg in get_flashed_messages() %}
             <div class="alert alert-dark" role="alert">{{ mesg }}</div>
         {% endfor %}
