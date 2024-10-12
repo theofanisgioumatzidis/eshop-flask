@@ -1,4 +1,4 @@
-  DROP TABLE IF EXISTS cart;
+DROP TABLE IF EXISTS cart;
   DROP TABLE IF EXISTS users;
   DROP TABLE IF EXISTS products;
   DROP TABLE IF EXISTS cart;
@@ -35,9 +35,9 @@ INSERT INTO products (active, category, title, brand, price, descript,
        VALUES ("True", "Smartphones","iPhone 15 5G (6GB/128GB)", "apple", 799.00,
              "iPhone 15 offers Dynamic Island, a 48MP main camera and a USB-C port — all in a durable design that combines aluminum and color-infused glass.",
              "/static/product_img/iphone_15_128.jpeg", 6, 128, "ios", 2023, "black"),
-            ("True", "Smartphones","Samsung Galaxy S23 FE (Exynos) 5G (8GB/128GB)", "samsung", 488.88,
+            ("True", "Smartphones","Samsung Galaxy S23 FE 5G (8GB/128GB)", "samsung", 488.88,
              "Epic moments are now accessible to everyone. The Galaxy S23 FE opens the door for more people to experience the extraordinary. With long-lasting power and stunning night shots, the phone becomes your gateway to epic memories that last.",
-             "/static/product_img/sam_s23_fe_256.jpeg", 8, 128, "android", 2023, "black"),
+             "/static/product_img/sam_s23_fe.jpeg", 8, 128, "android", 2023, "black"),
              ("True", "Laptops","Apple MacBook Pro 16", "Apple", 3790.00,
              "MacBook Pro is for professionals looking for maximum power in areas like video and audio processing, as well as professional developers.",
              "/static/product_img/Apple_MacBook_Pro_16.jpeg", 32, 1000, "IOS", 2021, "Silver"),
