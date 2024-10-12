@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block title %}Home - My E-Shop{% endblock %}
+
+{% block content %}
+    <div class="jumbotron text-center">
+        <h2>{{ products[0].category }}</h2>
+    </div>
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <img src="{{ product['img_route'] }}" alt="{{ product.title }}" class="img-fluid rounded img_tile">
+                            </div>
+                            <div class="col-md-7">
+                                <a href="{{ url_for('product', product_id=product['id']) }}" class="h5 d-block">{{ product.title }}</a>
+                                <span class="badge badge-secondary "> ${{ product.price }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
