@@ -32,9 +32,6 @@ def after_request(response):
 
 @app.route('/')
 def index():
-    query = """SELECT * FROM products WHERE active = "True" """
-    products = SQL(query, )
-    print(products[5]['category'])
     query = """SELECT * FROM products WHERE active = "True" AND category = "Laptops" """
     laptops = SQL(query, )
     query = """SELECT * FROM products WHERE active = "True" AND category = "Smartphones" """
