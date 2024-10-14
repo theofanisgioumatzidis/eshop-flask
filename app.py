@@ -32,6 +32,7 @@ def after_request(response):
 
 @app.route('/')
 def index():
+    """Display homepage with laptop and smartphone products"""
     query = """SELECT * FROM products WHERE active = "True" AND category = "Laptops" """
     laptops = SQL(query, )
     query = """SELECT * FROM products WHERE active = "True" AND category = "Smartphones" """
@@ -41,6 +42,7 @@ def index():
 
 @app.route('/product/<int:product_id>')
 def product(product_id):
+    """Display a single product by its ID"""
     query = """SELECT * FROM products WHERE id = ? AND active = "True" """
     product = SQL(query, (product_id,))[0]
     return render_template('product.html', product=product)
@@ -48,10 +50,13 @@ def product(product_id):
 
 @app.route('/update_cart', methods=["POST"])
 def update_cart():
+    """Update the user's shopping cart (add, remove, increase or decrease quantity)"""
     if 'user_id' not in session:
         return "not_logged_in"
     product_id = int(request.form.get('productId'))
     action = request.form.get('action')
+    
+    # If action is 'delete', remove product from cart and session
     if (action == 'delete'):
         query = """ DELETE FROM cart
                     WHERE user_id = ? AND product_id = ?"""
@@ -62,10 +67,13 @@ def update_cart():
                 break
         return "Cart updated successfully!"
 
+    # Determine the change in quantity (increase or decrease)
     if (action == 'increase'):
         change = 1
     elif (action == 'decrease'):
         change = -1
+
+    # Update quantity in database and session
     query = """SELECT quantity FROM cart
                 WHERE user_id = ? AND product_id = ?"""
     quantity = (SQL(query, (session["user_id"], product_id,)))[0][0]
@@ -82,7 +90,8 @@ def update_cart():
 
 @app.route('/cart', methods=["GET", "POST"])
 def cart():
-    # Add a product to the cart
+    """Handle adding a product to the cart and display the cart contents"""
+    # Handle adding a product to the cart via POST
     if request.method == "POST":
         if 'user_id' not in session:
             return "not_logged_in"
@@ -92,6 +101,7 @@ def cart():
         quantity = 1
 
         try:
+            # If product is already in the cart, update its quantity
             query = """SELECT quantity FROM cart
                     WHERE user_id = ? AND product_id = ?"""
             quantity = (SQL(query, (session["user_id"], product_id,)))[0][0]
@@ -103,6 +113,7 @@ def cart():
                 if session['cart'][i]['id'] == product_id:
                     session['cart'][i]['quantity'] += 1
         except:
+            # If product is not in the cart, insert it
             query = """INSERT INTO cart (user_id, product_id, quantity)
                     VALUES (?,?,?)"""
             SQL(query, (session["user_id"], product_id, quantity,))
@@ -118,6 +129,7 @@ def cart():
             "message": "Product added to cart successfully!",
             "cart": updated_cart}
 
+    # Display cart if user is logged in, otherwise redirect to login
     if 'user_id' not in session:
         return redirect('/login')
     shipping_cost = 9.99
@@ -129,6 +141,7 @@ def cart():
 
 @app.route('/category/<category>')
 def category(category):
+    """Display products by category"""
     query = """SELECT * FROM products WHERE category = ? AND active = "True" """
     products = SQL(query, (category,))
     print(products)
@@ -137,11 +150,13 @@ def category(category):
 
 @app.route('/orders')
 def orders():
+    """Display user's past orders"""
     if 'user_id' not in session:
         return redirect('/login')
     query = """SELECT * FROM orders WHERE user_id = ? """
     orders = (SQL(query, (session['user_id'],)))
 
+    # Fetch products associated with each order
     query = """SELECT P.img_route, P.title, OP.quantity, P.price FROM orderss_products AS OP, products AS P
                 WHERE OP.order_id = ? AND
                       OP.product_id = P.id AND
@@ -156,20 +171,26 @@ def orders():
 
 @app.route('/checkout')
 def checkout():
+    """Handle checkout process"""
     if 'user_id' not in session:
         return redirect('/login')
+
+    # Insert order details into database
     the_date = strftime("%a, %d %b %Y %H:%M:%S",
                         time.localtime())
     shipping_cost = request.args.get("shipping_cost")
     total_cost = request.args.get("total_cost")
     query = """INSERT INTO orders (user_id, the_date, shipping_cost, total_cost) VALUES(?, ?, ?, ?)"""
     SQL(query, (session['user_id'], the_date, shipping_cost, total_cost,))
+    
+    # Insert products into the order
     query = """SELECT id FROM orders WHERE the_date = ?"""
     order_id = (SQL(query, (the_date,)))[0][0]
     for product in session['cart']:
         query = """INSERT INTO orderss_products (order_id, product_id, quantity) VALUES(?, ?, ?)"""
         SQL(query, (order_id, product['id'], product['quantity']))
 
+    # Clear the user's cart
     query = """DELETE FROM CART WHERE user_id = ?"""
     SQL(query, (session['user_id'],))
     session['cart'].clear()
@@ -179,14 +200,14 @@ def checkout():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    """Handle user registration"""
     try:
         username = session["username"]
         return redirect('/')
     except:
         pass
-    """Register user"""
-
-    # User reached route via POST (as by submitting a form via POST)
+    
+    # If form is submitted via POST, validate inputs and register the user
     if request.method == "POST":
 
         # Validate submission
@@ -200,6 +221,7 @@ def register():
             flash("Password and confirmation must match")
             return redirect("/login")
 
+        # Insert new user into the database
         query = """INSERT INTO users (username, hash, access) VALUES(?, ?, ?)"""
         SQL(query, (username, generate_password_hash(password), "user",))
         flash("Registration successful!")
@@ -210,6 +232,7 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    """Handle user login"""
     try:
         username = session["username"]
         return redirect('/')
@@ -233,7 +256,7 @@ def login():
         elif not request.form.get("password"):
             flash("You must provide the password")
             return redirect("/")
-
+            
         query = """SELECT * FROM users WHERE username = ?"""
         rows = SQL(query, (username,))
 
@@ -268,14 +291,13 @@ def login():
 
 @app.route("/logout")
 def logout():
-    """Log user out"""
-
+    """Log user out by clearing session and redirecting to login"""
     session.clear()
-
     # Redirect user to login form
     flash('Logged out successfully.')
     return redirect("/")
 
 
 if __name__ == '__main__':
+    # Run the Flask app in debug mode
     app.run(debug=True)
