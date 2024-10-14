@@ -11,7 +11,7 @@ Bootstrap
 jquery
 
 
-#### How the webpage works
+# How the webpage works
 
 ##### Before log in
 
@@ -57,7 +57,7 @@ When hovered upon the cart button, now the contents of the user’s cart are dis
 ##### Orders
 When the user clicks on the orders button, he/she is redirected to the orders page. In the Orders page the user is presented with a list of all the orders placed by him/herself with the date price and shipping. When the “Contents” button is being clicked, dynamically appear the contents of the order with each name, price and quantity.
 
-#### How it was developed
+# How it was developed
 
 All the data are stored in a sqlite3 database and then extracted when needed. A helper function was created for easy quering.
 
