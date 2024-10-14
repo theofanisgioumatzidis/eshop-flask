@@ -137,6 +137,8 @@ def category(category):
 
 @app.route('/orders')
 def orders():
+    if 'user_id' not in session:
+        return redirect('/login')
     query = """SELECT * FROM orders WHERE user_id = ? """
     orders = (SQL(query, (session['user_id'],)))
 
