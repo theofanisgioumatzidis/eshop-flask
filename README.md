@@ -1,5 +1,5 @@
 # My E-Shop
-#### Video Demo:  https://youtu.be/unyTP3Wcz8g
+#### Video Demo:  https://youtu.be/Z-JMcEH23eE
 #### Description:
 
 This project is a web application using flask that depicts an eshop called "My E-Shop" that is styled to be used by both desktop and mobile devices. The eshop contains smartphones and laptops that the user after login can add to cart, then checkout the cart and lastly see the order along with any previous orders that the user has placed in the past.
