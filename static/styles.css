@@ -7,11 +7,7 @@
     z-index: 1000;
 }
 
-@media (min-width: 1025px) {
-    .h-custom {
-        height: 100vh !important;
-    }
-}
+
 
 .img_cart_dropdown {
     height: 50px;
@@ -37,4 +33,21 @@
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+@media (max-width: 1024px) {
+    .img_cart_dropdown {
+        height: 30px; /* or adjust as needed */
+        max-width: 50px; /* responsive max width */
+    }
+
+    .img_tile {
+        height: auto;
+        max-width: 80px; /* scales down for smaller screens */
+    }
+
+    .img_product {
+        height: auto;
+        max-width: 90%; /* fills most of the screen without distortion */
+    }
 }
