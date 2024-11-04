@@ -19,20 +19,20 @@
                 var items = {{ session.get('cart', []) | tojson }};
                 if (items.length > 0) {
                     items.forEach((item, i) => {
-                        let truncatedTitle = item.title.length > 20 ? item.title.substring(0, 20) + "..." : item.title;
+                        let truncatedTitle = item.title.length > 25 ? item.title.substring(0, 25) + "..." : item.title;
                         $('#itemList .list-group').append(
                             `<li class="list-group-item">
                                 <div class="row align-items-center">
                                     <div class="col-md-4">
                                         <h6 style="color: black;">${truncatedTitle}</h6>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <span style="color: black;">Quantity: ${item.quantity}</span>
                                     </div>
                                     <div class="col-md-3">
                                         <img src="${item.img_route}" alt="${item.title}" class="img-fluid rounded img_cart_dropdown" style="max-width: 100px;">
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <span class="badge badge-secondary">$${item.price}</span>
                                     </div>
                                 </div>

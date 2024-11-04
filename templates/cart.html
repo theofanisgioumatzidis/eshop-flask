@@ -18,15 +18,17 @@
                                 </div>
                                 <div class="product-info">
                                     <h5>{{ product.title }}</h5>
-                                    <div class="d-flex align-items-center">
-                                        <button class="btn btn-sm btn-secondary" onclick="updateQuantity('{{ product.id }}', 'decrease')">-</button>
-                                        <span class="mx-2">{{ product.quantity }}</span>
-                                        <button class="btn btn-sm btn-secondary" onclick="updateQuantity('{{ product.id }}', 'increase')">+</button>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <button class="btn btn-sm btn-secondary" onclick="updateQuantity('{{ product.id }}', 'decrease')">-</button>
+                                            <span class="mx-2">{{ product.quantity }}</span>
+                                            <button class="btn btn-sm btn-secondary" onclick="updateQuantity('{{ product.id }}', 'increase')">+</button>
+                                        </div>
+                                        <div class="product-actions d-flex align-items-center">
+                                            <span class="badge badge-secondary"> ${{ product.price }}</span>
+                                            <button class="btn btn-sm btn-danger" onclick="updateQuantity('{{ product.id }}', 'delete')">&times;</button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="product-actions">
-                                    <span class="badge badge-secondary"> ${{ product.price }}</span>
-                                    <button class="btn btn-sm btn-danger" onclick="updateQuantity('{{ product.id }}', 'delete')">&times;</button>
                                 </div>
                             </li>
                         {% endfor %}
