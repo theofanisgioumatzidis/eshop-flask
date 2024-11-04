@@ -261,8 +261,10 @@ def login():
         rows = SQL(query, (username,))
 
         # Ensure username exists and password is correct
-        if not check_password_hash(
-                rows[0]["hash"], request.form.get("password")):
+        if not rows:
+            flash("Invalid username and/or password")
+            return redirect("/")
+        if not check_password_hash(rows[0]["hash"], request.form.get("password")):
             flash("Invalid username and/or password")
             return redirect("/")
 
